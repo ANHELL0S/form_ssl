@@ -18,7 +18,7 @@ const __dirname = path.resolve()
 // PERMITIR ACCESO DESDE OTRO ORIGEN
 app.use(
 	cors({
-		origin: ['http://localhost:3000', 'http://192.168.1.19:3000'],
+		origin: ['http://localhost:3000', 'https://form-ssl-1.onrender.com'],
 		credentials: true,
 	})
 )
