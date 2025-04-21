@@ -10,12 +10,24 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
+interface SuccessResponse {
+	data: {
+		meta: {
+			userId: string
+			sesionAtd: string
+		}
+		token: string
+	}
+	message: string
+}
+
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
 	const [formData, setFormData] = useState({ email: '', password: '' })
-	const [success, setSuccess] = useState<string | null>(null)
+
+	const [success, setSuccess] = useState<SuccessResponse | null>(null)
 
 	// Obtenga la URL base de la API según la configuración de SSL .ENV
-	const apiUrl = 'https://localhost:4000'
+	const apiUrl = process.env.NEXT_PUBLIC_URL_API
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, value } = e.target
@@ -32,8 +44,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 			setSuccess(response.data)
 			console.log(response.data)
 			toast.success(response?.data?.message)
-		} catch (err) {
-			toast.error(err?.response?.data?.message)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (err: any) {
+			toast.error(err?.response?.data?.message || 'An unexpected error occurred')
 		}
 	}
 
