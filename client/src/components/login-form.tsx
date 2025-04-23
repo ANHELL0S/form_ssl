@@ -23,10 +23,9 @@ interface SuccessResponse {
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
 	const [formData, setFormData] = useState({ email: '', password: '' })
-
 	const [success, setSuccess] = useState<SuccessResponse | null>(null)
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	// Obtenga la URL base de la API según la configuración de SSL .ENV
 	const apiUrl = process.env.NEXT_PUBLIC_URL_API
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,17 +35,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
+		setIsSubmitting(true)
 		setSuccess(null)
+
 		try {
 			const response = await axios.post(`${apiUrl}/login`, formData, {
 				withCredentials: true,
 			})
 			setSuccess(response.data)
-			console.log(response.data)
 			toast.success(response?.data?.message)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
-			toast.error(err?.response?.data?.message || 'An unexpected error occurred')
+			toast.error(err?.response?.data?.message || 'Ha ocurrido un error inesperado')
+		} finally {
+			setIsSubmitting(false)
 		}
 	}
 
@@ -87,7 +88,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 				<Card>
 					<CardHeader>
 						<CardTitle>Inicia sesión en tu cuenta</CardTitle>
-
 						<CardDescription>
 							Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta
 						</CardDescription>
@@ -104,25 +104,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 										placeholder='m@ejemplo.com'
 										value={formData.email}
 										onChange={handleChange}
+										disabled={isSubmitting}
 									/>
 								</div>
 
 								<div className='grid gap-3'>
-									<div className='flex items-center'>
-										<Label htmlFor='password'>Contraseña</Label>
-									</div>
+									<Label htmlFor='password'>Contraseña</Label>
 									<Input
 										id='password'
 										type='password'
 										placeholder='********'
 										value={formData.password}
 										onChange={handleChange}
+										disabled={isSubmitting}
 									/>
 								</div>
 
 								<div className='flex flex-col gap-3'>
-									<Button type='submit' className='w-full'>
-										Continuar
+									<Button type='submit' className='w-full' disabled={isSubmitting}>
+										{isSubmitting ? 'Iniciando...' : 'Continuar'}
 									</Button>
 								</div>
 							</div>
