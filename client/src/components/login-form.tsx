@@ -44,6 +44,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 			})
 			setSuccess(response.data)
 			toast.success(response?.data?.message)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			toast.error(err?.response?.data?.message || 'Ha ocurrido un error inesperado')
 		} finally {
